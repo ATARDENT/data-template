@@ -53,14 +53,7 @@ tag:
 
 ## Pipeline
 
-```
-Step 1 — Clone        Fetch the raw dataset (via download.py if remote)
-Step 2 — Pre-validate Run pre-rules/validate.py on the raw data
-Step 3 — Compile      Run script/compile.py  [only if compile: true]
-          └─ Post-validate  Run post-rules/validate.py on the compiled output
-Step 4 — Store        Push the compiled dataset to the configured destination
-Step 5 — Tag          Create a Git tag  <prefix>-v<version>  on the target branch
-```
+![alt text](image.png)
 
 **Steps 3–5 are gated on merge.** To avoid abusing CI resources, compilation, storage, and tagging only run when a pull request is merged into the main branch. On regular pushes and open PRs, the pipeline runs Steps 1–2 only (clone + validate), giving fast feedback without triggering expensive operations.
 
