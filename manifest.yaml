@@ -1,0 +1,50 @@
+version: "1.0.0"          # version of the dataset
+
+input:                    # source of the dataset
+  source: "github"        # github | remote, if github, then the dataset is stored in the dataset folder, else use download script to download the dataset
+
+output:
+  name: "my-dataset-train" # name of the compiled dataset
+  folder_path: "~/folder/to/store" # folder path to store the compiled dataset
+  destination: "gdrive"   # gdrive | huggingface | idrive2, if gdrive, then the dataset is stored in the gdrive folder, else use the download script to download the dataset
+
+remote:                     # remote storage to store the compiled dataset
+  gdrive:
+    folder_id: ""         # Google Drive folder ID to upload into
+
+  huggingface:             # huggingface storage to store the compiled dataset
+    repo_id: ""           # e.g. your-org/my-dataset
+    repo_type: "dataset"  # dataset | model | space
+    private: true         # whether the HF repo is private
+
+  idrive2:                 # idrive2 storage to store the compiled dataset
+    bucket: ""            # IDrive2 bucket name
+    region: ""            # e.g. v1.us-southeast-1.idrivee2-4.com
+    endpoint: ""          # IDrive2 S3-compatible endpoint URL
+
+steps:                     # steps configuration to run the dataset pipeline
+  pre-rules:
+    enabled: true
+    script: "scripts/pre-rules/validate.py"
+  compile:
+    enabled: true
+    script: "scripts/compile/compile.py"
+    extensions: [".jsonl", ".parquet", ".arrow"]  # list; empty = accept all
+  post-rules:
+    enabled: true
+    script: "scripts/post-rules/validate.py"
+  tag:
+    enabled: true # whether to tag the dataset using format: <prefix>-v<version>-<suffix>, else tag by date and time
+    prefix: "dataset" # prefix of the tag
+    suffix: "train" # suffix of the tag
+    github-branch: "main" # github branch to push the dataset to
+    dvc-file: "dvc.yaml" # dvc file to track the dataset
+
+dependencies: # python packages to install
+  - name: "pandas"
+    version: "1.5.0"
+  - name: "numpy"
+    version: "1.20.0"
+
+variables:                  # variables to use in the scripts
+  example: "example"
